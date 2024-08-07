@@ -51,14 +51,16 @@ const axios = require('axios');
 const algorithm = 'aes-128-cbc';
 
 const downloadFile = async (req, res) => {
-  const { url, key, iv } = req.body;
+  const { keyName, XAmzCredential, XAmzDate, XAmzExpires, XAmzSignature, key, iv } = req.query;
 
-  if (!url || !key || !iv) {
-    res.status(400).send('Missing required query parameters: url, key, iv');
+  if (!keyName || !XAmzCredential || !XAmzDate || !XAmzExpires || !XAmzSignature || !key || !iv) {
+    res.status(400).send('Missing required query parameters: fileName, AWSAccessKeyId, Expires, Signature, key, iv');
     return;
   }
 
   try {
+    const url = `https://cloudshare1.s3.us-east-1.amazonaws.com/${keyName}?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=${XAmzCredential}&X-Amz-Date=${XAmzDate}&X-Amz-Expires=${XAmzExpires}&X-Amz-Signature=${XAmzSignature}&X-Amz-SignedHeaders=host&x-id=GetObject`
+    console.log("from downlaod file: "+url)
     const response = await axios({
       url,
       method: 'GET',
@@ -73,7 +75,6 @@ const downloadFile = async (req, res) => {
     const nullIndex = decrypted.indexOf('\0');
     const extension = decrypted.slice(0, nullIndex).toString();
     const originalContent = decrypted.slice(nullIndex + 1);
-
     res.setHeader('Content-Disposition', `attachment; filename="decrypted${extension}"`);
     res.send(originalContent);
   } catch (error) {

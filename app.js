@@ -1,12 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const upload = require('./middleware/originalFileName');
 const { uploadFile } = require('./upload');
 const { downloadFile } = require('./download');
 
 const app = express();
-const port = 3000; // Change to your preferred port
+const port = 3001; // Change to your preferred port
 
 app.use(bodyParser.json());
 
