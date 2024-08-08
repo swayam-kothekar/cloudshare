@@ -10,7 +10,7 @@ const port = 3001; // Change to your preferred port
 app.use(bodyParser.json());
 
 // Upload file endpoint
-app.post('/upload', upload.single('file'), uploadFile);
+app.post('/upload', upload.array('files'), uploadFile);
 
 // Download file endpoint
 app.get('/download', downloadFile);

@@ -60,7 +60,6 @@ const downloadFile = async (req, res) => {
 
   try {
     const url = `https://cloudshare1.s3.us-east-1.amazonaws.com/${keyName}?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=${XAmzCredential}&X-Amz-Date=${XAmzDate}&X-Amz-Expires=${XAmzExpires}&X-Amz-Signature=${XAmzSignature}&X-Amz-SignedHeaders=host&x-id=GetObject`
-    console.log("from downlaod file: "+url)
     const response = await axios({
       url,
       method: 'GET',
@@ -75,7 +74,7 @@ const downloadFile = async (req, res) => {
     const nullIndex = decrypted.indexOf('\0');
     const extension = decrypted.slice(0, nullIndex).toString();
     const originalContent = decrypted.slice(nullIndex + 1);
-    res.setHeader('Content-Disposition', `attachment; filename="decrypted${extension}"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${keyName.substring(keyName.indexOf('-') + 1).split('.')[0] + extension}"`);
     res.send(originalContent);
   } catch (error) {
     res.status(500).send({ error: error.message });
